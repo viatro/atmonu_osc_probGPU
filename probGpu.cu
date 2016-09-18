@@ -754,7 +754,7 @@ __device__ void get_transition_matrix(int nutypei,double Enuf,double rhof,double
 
 
 // the colonel! (kernel...)
-__global__ void propagateLinear(int Alpha, int Beta, double Path, double Density, double Mix[3][3][2], double dm[3][3], double *Energy, double *osc_w, int n)
+__global__ void propagateLinear(int Alpha, int Beta, double Path, double Density, double ye, double Mix[3][3][2], double dm[3][3], double *Energy, double *osc_w, int n)
 {
   // here we go
   bool kUseMassEigenstates = false; // quick hack for now
@@ -773,7 +773,7 @@ __global__ void propagateLinear(int Alpha, int Beta, double Path, double Density
   
   get_transition_matrix( Alpha, 
 			 Energy[idx],               // in GeV
-			 Density * 0.5,               
+			 Density * ye,   // density * density_convert            
 			 Path,          // in km
 			 TransitionMatrix,     // Output transition matrix
 			 0.0,
@@ -806,7 +806,7 @@ __global__ void propagateLinear(int Alpha, int Beta, double Path, double Density
     }
 }
 
-extern "C" __host__ void GetProb(int Alpha, int Beta, double Path, double Density, double *Energy, int n, double *oscw)
+extern "C" __host__ void GetProb(int Alpha, int Beta, double Path, double Density, double ye, double *Energy, int n, double *oscw)
 {
   // copy DM matrix
   size_t dmsize = 3*3*sizeof(double);
@@ -843,7 +843,7 @@ extern "C" __host__ void GetProb(int Alpha, int Beta, double Path, double Densit
   dim3 grid_size;
   grid_size.x = (n / block_size.x) + 1;
   
-  propagateLinear<<<grid_size, block_size>>>(Alpha, Beta, Path, Density, mix_device, dm_device, energy_device, osc_weights,n);
+  propagateLinear<<<grid_size, block_size>>>(Alpha, Beta, Path, Density, ye, mix_device, dm_device, energy_device, osc_weights, n);
   CudaCheckError();
   
   // copy the results back    
