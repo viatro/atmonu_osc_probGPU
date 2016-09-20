@@ -11,11 +11,7 @@ const double Pi = acos(-1.0);
 class EarthCrossing {
 
   private:
-
-    double x;
-    double xini;
-    double xend;
-    double L;
+    
     double zenith_angle;
     double production_height;
     double detector_depth;
@@ -208,14 +204,6 @@ class EarthCrossing {
         this->production_height = production_height;
         this->detector_depth = detector_depth;
 
-        double b = R - detector_depth;
-        double c = R + production_height;
-
-        double a1 = b * cos(Pi - zenith_angle);
-        double f = b * sin(Pi - zenith_angle);
-        double a2 = sqrt(c*c - f*f);
-        L = a1 + a2;
-
         FillCrossingLayers();
     }
 
@@ -271,19 +259,6 @@ int main (int argc, char **argv) {
 
     }
     cout << endl;
-
-    /*GetProb(1, 1, 2.*6371., 13.0, 0.5, energies.data(), energies.size(), osc_weights[0].data());
-    GetProb(1, 2, 2.*6371., 13.0, 0.5, energies.data(), energies.size(), osc_weights[1].data());
-    GetProb(1, 3, 2.*6371., 13.0, 0.5, energies.data(), energies.size(), osc_weights[2].data());
-
-    for (size_t i = 0; i < energies.size(); ++i) {
-        for (int j = 0; j < 3; ++j) {
-//            if (osc_weights[j][i] < 0.0 || osc_weights[j][i] > 1.0) {
-                cout << energies[i]*1000.0 << " MeV :\t" << j << "\t" << osc_weights[j][i] << endl;
-//            }
-        }
-
-    }*/
 
     return 0;
 }
